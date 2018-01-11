@@ -23,7 +23,13 @@ Usage
 -----
 
 ````
-$ porg <path>
+$ porg [options] <path>
+
+Options:
+
+    -d, --delete   delete source file(s)
+    -V, --version  output the version number
+    -h, --help     output usage information
 ````
 
 Examples

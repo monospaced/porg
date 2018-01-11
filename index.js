@@ -44,6 +44,14 @@ const convert = file => {
           if (err) {
             throw err;
           }
+
+          if (program.delete) {
+            fs.unlink(file, err => {
+              if (err) {
+                throw err;
+              }
+            });
+          }
         });
       });
     }
@@ -66,6 +74,7 @@ program
     pathValue = path;
   })
   .description("Convert SVG to JSX")
+  .option("-d, --delete", "delete source file(s)")
   .usage("[options] <path>")
   .version("0.0.0")
   .parse(process.argv);
