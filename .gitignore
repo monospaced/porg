@@ -1,0 +1,6 @@
+.DS_Store
+/node_modules
+npm-debug.log
+.eslintcache
+/tmp
+/test/test.js

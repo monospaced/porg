@@ -1,0 +1,20 @@
+{
+  "name": "porg",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.js",
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-register": "^6.26.0",
+    "prettier": "^1.10.2",
+    "svgo": "^1.0.3"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.1",
+    "eslint": "^4.15.0"
+  },
+  "bin": {
+    "porg": "index.js"
+  }
+}
