@@ -13,7 +13,10 @@ require("babel-register")({
   ]
 });
 
+const fs = require("fs");
+const path = require("path");
 const prettier = require("prettier");
+const program = require("commander");
 const Svgo = require("svgo");
 const svgo = new Svgo({
   plugins: [
@@ -25,17 +28,7 @@ const svgo = new Svgo({
   ]
 });
 
-const fs = require("fs");
-const path = require("path");
-
-const userArgs = process.argv.slice(2);
-const pathName = userArgs[0];
-
-if (!pathName) {
-  throw new Error("Path argument not specified");
-}
-
-const processFile = file => {
+const convert = file => {
   fs.readFile(file, "utf8", (err, data) => {
     if (err) {
       throw err;
@@ -57,21 +50,6 @@ const processFile = file => {
   });
 };
 
-if (fs.lstatSync(pathName).isDirectory()) {
-  const directory = pathName.endsWith("/") ? pathName : `${pathName}/`;
-
-  fs.readdir(directory, (err, files) => {
-    if (err) {
-      throw err;
-    }
-    files.forEach(file => {
-      processFile(`${directory}${file}`);
-    });
-  });
-} else {
-  processFile(pathName);
-}
-
 const template = svg => {
   return `
     import React from "react";
@@ -81,3 +59,34 @@ const template = svg => {
     export default svg;
   `.trim();
 };
+
+program
+  .arguments("<path>")
+  .action(path => {
+    pathValue = path;
+  })
+  .description("Convert SVG to JSX")
+  .usage("[options] <path>")
+  .version("0.0.0")
+  .parse(process.argv);
+
+if (typeof pathValue === "undefined") {
+  console.error("path argument not supplied");
+  process.exit(1);
+}
+
+if (fs.lstatSync(pathValue).isDirectory()) {
+  const dir = pathValue.endsWith("/") ? pathValue : `${pathValue}/`;
+
+  return fs.readdir(dir, (err, files) => {
+    if (err) {
+      throw err;
+    }
+
+    files.forEach(file => {
+      convert(`${dir}${file}`);
+    });
+  });
+}
+
+return convert(pathValue);
