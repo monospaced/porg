@@ -58,15 +58,7 @@ const convert = file => {
   });
 };
 
-const template = svg => {
-  return `
-    import React from "react";
-
-    const svg = () => (${svg});
-
-    export default svg;
-  `.trim();
-};
+const template = svg => `import React from "react";export default (${svg});`;
 
 program
   .arguments("<path>")
