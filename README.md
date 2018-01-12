@@ -1,6 +1,42 @@
 # Porg
 
-Convert SVG to JSX.
+Convert SVG to JSX
+
+![porg.svg](porg.svg)
+
+From `.svg`
+
+```html
+<svg xmlns="http://www.w3.org/2000/svg">
+  <g>…</g>
+</svg>
+```
+
+To `.js`
+
+```js
+import React from "react";
+
+const svg = () => (
+  <svg xmlns="http://www.w3.org/2000/svg">
+    <g>…</g>
+  </svg>
+);
+
+export default svg;
+```
+
+## Usage
+
+```
+$ porg [options] <path>
+
+Options:
+
+    -d, --delete   delete source file(s)
+    -V, --version  output the version number
+    -h, --help     output usage information
+```
 
 ## Dependencies
 
@@ -14,18 +50,6 @@ yarn `brew install yarn --without-node`
 $ git clone git@github.com:monospaced/porg.git
 $ cd porg
 $ yarn && yarn link
-```
-
-## Usage
-
-```
-$ porg [options] <path>
-
-Options:
-
-    -d, --delete   delete source file(s)
-    -V, --version  output the version number
-    -h, --help     output usage information
 ```
 
 ## Examples
