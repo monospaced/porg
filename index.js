@@ -17,6 +17,7 @@ const fs = require("fs");
 const path = require("path");
 const prettier = require("prettier");
 const program = require("commander");
+const recurse = require("recursive-readdir");
 const Svgo = require("svgo");
 const svgo = new Svgo({
   plugins: [
@@ -29,6 +30,14 @@ const svgo = new Svgo({
 });
 
 const convert = file => {
+  if (
+    !fs.existsSync(file) ||
+    fs.lstatSync(file).isDirectory() ||
+    path.extname(file) !== ".svg"
+  ) {
+    return;
+  }
+
   fs.readFile(file, "utf8", (err, data) => {
     if (err) {
       throw err;
@@ -67,6 +76,7 @@ program
   })
   .description("Convert SVG to JSX")
   .option("-d, --delete", "delete source file(s)")
+  .option("-r, --recursive", "process folders recursively")
   .usage("[options] <path>")
   .version("0.0.0")
   .parse(process.argv);
@@ -77,16 +87,22 @@ if (typeof pathValue === "undefined") {
 }
 
 if (fs.lstatSync(pathValue).isDirectory()) {
-  const dir = pathValue.endsWith("/") ? pathValue : `${pathValue}/`;
+  if (program.recursive) {
+    return recurse(pathValue, (err, files) => {
+      if (err) {
+        throw err;
+      }
 
-  return fs.readdir(dir, (err, files) => {
+      files.forEach(file => convert(file));
+    });
+  }
+
+  return fs.readdir(pathValue, (err, files) => {
     if (err) {
       throw err;
     }
 
-    files.forEach(file => {
-      convert(`${dir}${file}`);
-    });
+    files.forEach(file => convert(path.join(pathValue, file)));
   });
 }
 

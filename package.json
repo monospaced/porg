@@ -9,6 +9,7 @@
     "babel-register": "^6.26.0",
     "commander": "^2.13.0",
     "prettier": "^1.10.2",
+    "recursive-readdir": "^2.2.1",
     "svgo": "^1.0.3"
   },
   "devDependencies": {
