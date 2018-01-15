@@ -43,8 +43,9 @@ const convert = file => {
       throw err;
     }
 
-    if (path.extname(file) === ".svg") {
-      svgo.optimize(data).then(result => {
+    svgo
+      .optimize(data)
+      .then(result => {
         const svg = result.data;
         const jsx = prettier.format(template(svg));
         const filename = file.replace(".svg", ".js");
@@ -62,8 +63,10 @@ const convert = file => {
             });
           }
         });
+      })
+      .catch(err => {
+        console.error(err);
       });
-    }
   });
 };
 
