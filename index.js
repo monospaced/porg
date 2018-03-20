@@ -25,6 +25,12 @@ const svgo = new Svgo({
       convertShapeToPath: {
         convertArcs: true
       }
+    },
+    {
+      removeDimensions: true
+    },
+    {
+      removeViewBox: false
     }
   ]
 });
