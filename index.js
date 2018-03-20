@@ -28,6 +28,7 @@ const svgo = new Svgo({
     }
   ]
 });
+const svgtojsx = require("svg-to-jsx");
 
 const convert = file => {
   if (
@@ -47,22 +48,29 @@ const convert = file => {
       .optimize(data)
       .then(result => {
         const svg = result.data;
-        const jsx = prettier.format(template(svg));
-        const filename = file.replace(".svg", ".js");
 
-        fs.writeFile(filename, jsx, "utf-8", err => {
-          if (err) {
-            throw err;
-          }
+        svgtojsx(svg)
+          .then(jsx => {
+            const js = prettier.format(template(jsx));
+            const filename = file.replace(".svg", ".js");
 
-          if (program.delete) {
-            fs.unlink(file, err => {
+            fs.writeFile(filename, js, "utf-8", err => {
               if (err) {
                 throw err;
               }
+
+              if (program.delete) {
+                fs.unlink(file, err => {
+                  if (err) {
+                    throw err;
+                  }
+                });
+              }
             });
-          }
-        });
+          })
+          .catch(err => {
+            throw err;
+          });
       })
       .catch(err => {
         console.error(err);
