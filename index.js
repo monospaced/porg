@@ -132,12 +132,39 @@ if (fs.lstatSync(pathValue).isDirectory()) {
     });
   }
 
+  const dir = pathValue.endsWith("/") ? pathValue : `${pathValue}/`;
+  const exports = [];
+  const imports = [];
+
   return fs.readdir(pathValue, (err, files) => {
     if (err) {
       throw err;
     }
 
-    files.forEach(file => convert(path.join(pathValue, file)));
+    files.forEach(file => {
+      const extname = path.extname(file);
+      const basename = path.basename(file, extname);
+
+      if (extname === ".svg") {
+        const name = pascalCase(basename);
+        const varName = !name.match(/^\d/) ? name : `_${name}`;
+
+        imports.push(`import ${varName} from "./${basename}";`);
+        exports.push(`${varName}`);
+      }
+
+      convert(`${dir}${file}`);
+    });
+
+    const index = prettier.format(
+      `${imports.map(i => i).join("")}export default {${exports.map(i => i)}};`
+    );
+    console.log(index);
+    fs.writeFile(`${dir}index.js`, index, "utf-8", err => {
+      if (err) {
+        throw err;
+      }
+    });
   });
 }
 
