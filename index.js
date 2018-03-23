@@ -93,6 +93,7 @@ program
   })
   .description("Convert SVG to JSX")
   .option("-d, --delete", "delete source file(s)")
+  .option("-p, --prefix [string]", "prefix component displayName [Expressive]")
   .option("-r, --recursive", "process folders recursively")
   .usage("[options] <path>")
   .version("0.0.0")
