@@ -1,6 +1,8 @@
 #! /usr/bin/env node
 
-require("babel-register")({
+const babelOptions = { presets: ["env", "react"] };
+
+require("babel-core/register")({
   presets: [
     [
       "env",
@@ -13,6 +15,7 @@ require("babel-register")({
   ]
 });
 
+const babel = require("babel-core");
 const fs = require("fs");
 const path = require("path");
 const prettier = require("prettier");
@@ -62,7 +65,9 @@ const convert = file => {
               const displayName = `${
                 program.prefix ? program.prefix : ""
               }${pascalCase(path.basename(file, extname))}`;
-              const js = prettier.format(template(jsx, displayName));
+              const js = prettier.format(
+                babel.transform(template(jsx, displayName), babelOptions).code
+              );
               const filename = file.replace(".svg", ".js");
 
               fs.writeFile(filename, js, "utf-8", err => {
@@ -100,7 +105,13 @@ const pascalCase = string => {
 const template = (jsx, displayName) => {
   return `import PropTypes from "prop-types";import React from "react";import Svg from "@wel-ui/component-svg";const Icon = props => <Svg {...props}>{Icon.svg}</Svg>;
 
-  Icon.propTypes = {height: PropTypes.number,label: PropTypes.string,width: PropTypes.number};Icon.displayName = "${displayName}";Icon.svg = ${jsx};export default Icon;`;
+  Icon.propTypes = {height: PropTypes.number,label: PropTypes.string,width: PropTypes.number};
+
+  Icon.displayName = "${displayName}";
+
+  Icon.svg = ${jsx};
+
+  export default Icon;`;
 };
 
 program
@@ -157,9 +168,13 @@ if (fs.lstatSync(pathValue).isDirectory()) {
     });
 
     const index = prettier.format(
-      `${imports.map(i => i).join("")}export default {${exports.map(i => i)}};`
+      babel.transform(
+        `${imports.map(i => i).join("")}export default {${exports.map(
+          i => i
+        )}};`,
+        babelOptions
+      ).code
     );
-    console.log(index);
     fs.writeFile(`${dir}index.js`, index, "utf-8", err => {
       if (err) {
         throw err;
