@@ -4,3 +4,4 @@ npm-debug.log
 .eslintcache
 /tmp
 test.js
+test/*/index.js
